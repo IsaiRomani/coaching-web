@@ -189,23 +189,18 @@ img { max-width: 100%; display: block; }
   padding: 0.45rem 1rem; font-size: 0.95rem; background: var(--bg);
 }
 
-/* Mi enfoque: las tres bases de la formación */
-.influences {
-  list-style: none; padding: 0; margin: 2.5rem 0 0;
+/* Cómo te acompaño: tres principios */
+.principles {
+  list-style: none; padding: 0; margin: 2rem 0 0;
   display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
 }
-@media (min-width: 900px) { .influences { grid-template-columns: repeat(3, 1fr); } }
-.influences li { border-top: 2px solid var(--accent); padding-top: 1.5rem; }
-.influence-book {
-  font-family: var(--serif); font-style: italic; font-size: 1.55rem; line-height: 1.2;
-  margin: 0 0 0.4rem;
-}
-.influence-author { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 1.1rem; }
-.influence-session { color: var(--muted); font-size: 0.95rem; margin: 0; }
-.influence-session strong { color: var(--ink); font-weight: 600; }
-.invite {
-  margin: 3.5rem 0 0; max-width: var(--measure);
-  font-family: var(--serif); font-size: 1.35rem; line-height: 1.45;
+@media (min-width: 900px) { .principles { grid-template-columns: repeat(3, 1fr); } }
+.principles li { border-top: 2px solid var(--accent); padding-top: 1.5rem; }
+.principles h3 { font-size: 1.55rem; margin-bottom: 0.75rem; }
+.principles p { margin-bottom: 0.9rem; }
+.principles .credit {
+  font-family: var(--serif); font-style: italic; font-size: 1rem;
+  color: var(--muted); margin: 0;
 }
 
 /* Cómo funciona: pasos numerados */
