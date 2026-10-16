@@ -200,17 +200,13 @@ img { max-width: 100%; display: block; }
 .facts dt { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.2rem; }
 .facts dd { margin: 0; font-weight: 500; }
 
-/* Calendario */
-.calendar {
-  margin-top: 2rem;
-  background: #ffffff;           /* el calendario de Google siempre es claro */
-  border: 1px solid var(--line);
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-.calendar iframe { display: block; width: 100%; height: 680px; border: 0; }
-@media (max-width: 640px) { .calendar iframe { height: 900px; } }
-.calendar-fallback { margin-top: 1rem; color: var(--muted); font-size: 0.95rem; }
+/* Reserva */
+.booking { display: grid; gap: 2rem; align-items: end; }
+@media (min-width: 860px) { .booking { grid-template-columns: 1fr auto; gap: 4rem; } }
+.booking .prose p:last-child { margin-bottom: 0; }
+.booking-action { max-width: 22rem; }
+.button-large { font-size: 1.1rem; padding: 1.05rem 2rem; }
+.booking-note { color: var(--muted); font-size: 0.9rem; margin: 0.9rem 0 0; }
 
 /* Preguntas frecuentes */
 .faq { max-width: 46rem; margin-top: 1rem; }
