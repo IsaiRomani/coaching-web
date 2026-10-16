@@ -16,7 +16,353 @@
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Jost solo para el nombre del encabezado: se descargan únicamente estas letras -->
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&text=DAVIROMN%C3%8DCHEF%C3%93%20&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <!-- Estilos dentro de la página: una sola descarga y nunca quedan versiones viejas en caché -->
+  <style>
+/* ============================================================
+   Paleta y tipografía
+   Para cambiar colores, edita solo estas variables.
+   ============================================================ */
+:root {
+  --bg: #f4f6f3;        /* niebla */
+  --tint: #e6eeea;      /* salvia muy clara, secciones alternas */
+  --ink: #21363d;       /* pizarra profunda, texto principal */
+  --muted: #56686d;     /* texto secundario */
+  --accent: #2e6b5e;    /* pino, botones y enlaces */
+  --accent-ink: #ffffff;
+  --line: #c6d4ce;      /* bordes y separadores */
+
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mark: "Jost", "Public Sans", system-ui, sans-serif;   /* solo el nombre del encabezado */
+
+  --wrap: 76rem;
+  --measure: 38rem;
+  --space: clamp(4rem, 9vw, 7.5rem);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131e1e;
+    --tint: #192827;
+    --ink: #e3ebe7;
+    --muted: #9fb2ad;
+    --accent: #85c3b2;
+    --accent-ink: #10201d;
+    --line: #2d403d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131e1e;
+  --tint: #192827;
+  --ink: #e3ebe7;
+  --muted: #9fb2ad;
+  --accent: #85c3b2;
+  --accent-ink: #10201d;
+  --line: #2d403d;
+  color-scheme: dark;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.15; margin: 0; }
+h2 { font-size: clamp(2rem, 4vw, 2.75rem); letter-spacing: -0.01em; margin-bottom: 1.25rem; }
+h3 { font-size: 1.375rem; }
+p { margin: 0 0 1rem; }
+
+a { color: var(--accent); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+img { max-width: 100%; display: block; }
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+.prose { max-width: var(--measure); }
+
+.skip {
+  position: absolute; left: -999px; top: 0;
+  background: var(--ink); color: var(--bg); padding: 0.5rem 1rem; z-index: 10;
+}
+.skip:focus { left: 1rem; top: 1rem; }
+
+/* ============================================================
+   Encabezado
+   ============================================================ */
+.site-header { border-bottom: 1px solid var(--line); }
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; min-height: 5rem;
+}
+/* Nombre en dos líneas: DAVID ROMANÍ / COACH EN FORMACIÓN */
+.brand {
+  display: inline-flex; flex-direction: column; align-items: center;
+  font-family: var(--mark); color: var(--ink); text-decoration: none; line-height: 1;
+}
+.brand-name {
+  font-size: 1.25rem; font-weight: 600; letter-spacing: 0.16em;
+  margin-right: -0.16em;          /* compensa el espaciado final para centrar */
+}
+.brand-role {
+  font-size: 0.64rem; font-weight: 600; letter-spacing: 0.34em; color: var(--muted);
+  margin-top: 0.45rem; margin-right: -0.34em;
+}
+@media (max-width: 380px) {
+  .brand-name { font-size: 1.05rem; letter-spacing: 0.12em; margin-right: -0.12em; }
+  .brand-role { font-size: 0.56rem; letter-spacing: 0.28em; margin-right: -0.28em; }
+}
+.site-header nav { display: flex; align-items: center; gap: 1.75rem; }
+.site-header nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+.site-header nav a:hover { color: var(--ink); }
+.site-header nav .nav-cta { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 640px) {
+  .site-header nav a:not(.nav-cta) { display: none; }
+}
+
+/* ============================================================
+   Hero: la pregunta abierta
+   ============================================================ */
+.hero {
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  min-height: calc(100svh - 5rem);
+  display: flex; align-items: center;
+}
+.hero > .wrap { width: 100%; }
+.hero-intro { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
+.hero-question {
+  font-size: clamp(2.6rem, min(6.8vw, 9.5svh), 6.25rem);
+  line-height: 1.03;
+  letter-spacing: -0.025em;
+  max-width: 17ch;
+}
+/* La línea en blanco para "escribir" tu respuesta */
+.answer-line {
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.55;
+  max-width: 40rem;
+  margin: clamp(2rem, 5vw, 3rem) 0 clamp(1.75rem, 4vw, 2.5rem);
+  transform-origin: left;
+  animation: draw 1.4s cubic-bezier(.2,.7,.2,1) 0.3s both;
+}
+@keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.hero-sub { max-width: 36rem; font-size: clamp(1.1rem, 1.4vw, 1.3rem); color: var(--muted); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; margin-top: 2rem; }
+
+.button {
+  display: inline-block;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 0.85rem 1.5rem; border-radius: 999px;
+  font-weight: 600; text-decoration: none;
+  transition: filter .15s ease;
+}
+.button:hover { filter: brightness(1.08); }
+.text-link { font-weight: 500; }
+
+/* ============================================================
+   Secciones
+   ============================================================ */
+.section { padding: var(--space) 0; }
+.section-tint { background: var(--tint); }
+.lead { font-family: var(--serif); font-size: 1.4rem; line-height: 1.45; }
+
+/* Sobre mí */
+.split { display: grid; gap: 2.5rem; grid-template-columns: 1fr; }
+.portrait {
+  display: block; width: 100%; max-width: 15rem; height: auto; aspect-ratio: 4 / 5;
+  object-fit: cover; object-position: 50% 30%;
+  border-radius: 0.75rem; background: var(--tint);
+}
+/* En pantallas anchas la foto ocupa exactamente la altura del texto de presentación */
+@media (min-width: 760px) {
+  .split { grid-template-columns: minmax(16rem, 22rem) 1fr; gap: 4.5rem; align-items: stretch; }
+  .split-aside { position: relative; min-height: 22rem; }
+  .portrait {
+    position: absolute; inset: 0;
+    max-width: none; height: 100%; aspect-ratio: auto;
+  }
+}
+.credential { color: var(--muted); font-size: 0.95rem; border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1.5rem; }
+
+/* Comparación con otras ayudas */
+.compare-title { margin: 3.5rem 0 1.5rem; }
+.compare { margin: 0; display: grid; gap: 0; }
+.compare > div {
+  display: grid; gap: 0.25rem 2rem; padding: 1.25rem 0;
+  border-top: 1px solid var(--line);
+}
+.compare > div:last-child { border-bottom: 1px solid var(--line); }
+@media (min-width: 760px) { .compare > div { grid-template-columns: 12rem 1fr; } }
+.compare dt { font-family: var(--serif); font-size: 1.3rem; }
+.compare dd { margin: 0; max-width: var(--measure); color: var(--muted); }
+
+.topics { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.topics li {
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.45rem 1rem; font-size: 0.95rem; background: var(--bg);
+}
+
+/* Cómo te acompaño: tres principios */
+.principles {
+  list-style: none; padding: 0; margin: 2rem 0 0;
+  display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
+}
+@media (min-width: 900px) { .principles { grid-template-columns: repeat(3, 1fr); } }
+.principles li { border-top: 2px solid var(--accent); padding-top: 1.5rem; }
+.principles h3 { font-size: 1.55rem; margin-bottom: 0.75rem; }
+.principles p { margin-bottom: 0.9rem; }
+
+/* Cómo funciona: pasos numerados */
+.steps {
+  list-style: none; counter-reset: step; padding: 0; margin: 2.5rem 0 0;
+  display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
+}
+@media (min-width: 760px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px) { .steps { grid-template-columns: repeat(4, 1fr); } }
+.steps li { counter-increment: step; }
+.steps li::before {
+  content: counter(step);
+  display: block;
+  font-family: var(--serif); font-size: 2.75rem; line-height: 1;
+  color: var(--accent); margin-bottom: 1rem;
+}
+.steps h3 { margin-bottom: 0.5rem; }
+.steps p { color: var(--muted); margin: 0; }
+
+.facts {
+  margin: 4rem 0 0; padding-top: 2rem; border-top: 1px solid var(--line);
+  display: grid; gap: 1.5rem 2rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+.facts dt { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.2rem; }
+.facts dd { margin: 0; font-weight: 500; }
+
+/* Reserva: agenda de Google Calendar integrada */
+.calendar {
+  margin-top: 2rem;
+  background: #ffffff;           /* la agenda de Google siempre es clara */
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.calendar iframe { display: block; width: 100%; height: 720px; border: 0; }
+@media (max-width: 640px) { .calendar iframe { height: 960px; } }
+.calendar-fallback { margin: 1rem 0 0; color: var(--muted); font-size: 0.95rem; }
+
+/* Preguntas frecuentes */
+.faq { max-width: 46rem; margin-top: 1rem; }
+.faq details { border-top: 1px solid var(--line); }
+.faq details:last-child { border-bottom: 1px solid var(--line); }
+.faq summary {
+  cursor: pointer; list-style: none;
+  padding: 1.25rem 2.5rem 1.25rem 0; position: relative;
+  font-family: var(--serif); font-size: 1.3rem;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; position: absolute; right: 0.25rem; top: 50%;
+  transform: translateY(-50%); font-family: var(--sans); font-size: 1.5rem; color: var(--accent);
+  transition: transform .2s ease;
+}
+.faq details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq details p { color: var(--muted); max-width: var(--measure); padding-bottom: 1.25rem; margin: 0; }
+
+/* Pie */
+.site-footer { border-top: 1px solid var(--line); padding: 3rem 0; }
+.footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+.site-footer p { margin: 0; }
+.footer-small { color: var(--muted); font-size: 0.9rem; }
+
+/* ============================================================
+   Secciones como "diapositivas" en pantallas grandes
+   ============================================================ */
+@media (min-width: 900px) and (min-height: 640px) {
+  .section {
+    min-height: 100svh;
+    padding: clamp(3rem, 8svh, 5.5rem) 0;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .section > .wrap { width: 100%; }
+  .compare-title { margin-top: clamp(1.75rem, 4svh, 3.5rem); }
+  .compare > div { padding: clamp(0.7rem, 1.4svh, 1.15rem) 0; }
+  .facts { margin-top: clamp(2rem, 5svh, 4rem); }
+  /* La agenda se ajusta al alto de la pantalla para que la sección quepa entera */
+  .calendar iframe { height: clamp(540px, calc(100svh - 21rem), 760px); }
+}
+/* Cada giro de la rueda lleva a la sección siguiente */
+@media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  html { scroll-snap-type: y mandatory; }
+  .site-header, .section { scroll-snap-align: start; }
+  .site-footer { scroll-snap-align: end; }
+}
+
+/* Aparición suave del contenido al llegar a cada sección (solo con JavaScript) */
+.js-reveal .section > .wrap {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.js-reveal .section.is-in > .wrap { opacity: 1; transform: none; }
+
+/* Indicador de secciones: puntos a la derecha */
+.dots {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  z-index: 20; display: none;
+}
+@media (min-width: 900px) { .dots:not([hidden]) { display: block; } }
+.dots ol { list-style: none; margin: 0; padding: 0; position: relative; }
+.dots ol::before {               /* línea fina que une los puntos */
+  content: ""; position: absolute; right: 4px; top: 0.75rem; bottom: 0.75rem;
+  width: 1px; background: var(--line);
+}
+.dots a {
+  position: relative;
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+  height: 1.6rem; text-decoration: none;
+}
+.dots a::after {
+  content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--muted);
+  transition: transform .3s ease, background-color .3s ease, border-color .3s ease;
+}
+.dots a:hover::after { border-color: var(--accent); }
+.dots a[aria-current="true"]::after {
+  background: var(--accent); border-color: var(--accent); transform: scale(1.35);
+}
+.dot-label {
+  font-size: 0.8rem; font-weight: 500; color: var(--ink); white-space: nowrap;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  opacity: 0; transform: translateX(6px); pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.dots a:hover .dot-label,
+.dots a:focus-visible .dot-label,
+.dots a[aria-current="true"] .dot-label { opacity: 1; transform: none; }
+
+/* Respeta a quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js-reveal .section > .wrap { opacity: 1; transform: none; }
+}
+  </style>
 </head>
 <body>
 
@@ -292,6 +638,56 @@
         active.observe(sec);
         if (sec.classList.contains('section')) reveal.observe(sec);
       });
+
+      // Deslizamiento por secciones: cada gesto de la rueda o del trackpad lleva a la
+      // sección siguiente o anterior. Solo en pantallas grandes y si la persona no
+      // pidió reducir el movimiento.
+      var slides = window.matchMedia('(min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)');
+      var moving = false, lastWheel = 0, startedAt = 0;
+
+      function stops() {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        var list = [0];
+        sections.slice(1).forEach(function (s) { list.push(Math.min(s.offsetTop, max)); });
+        list.push(max);                       // el pie de página
+        return list;
+      }
+
+      function release() {
+        var now = Date.now();
+        // Espera a que termine la animación y a que la inercia del trackpad se detenga
+        if (now - startedAt > 750 && now - lastWheel > 160) { moving = false; return; }
+        setTimeout(release, 60);
+      }
+
+      window.addEventListener('wheel', function (e) {
+        if (!slides.matches || e.ctrlKey || Math.abs(e.deltaY) < 2) return;
+        lastWheel = Date.now();
+        if (moving) { e.preventDefault(); return; }
+
+        var dir = e.deltaY > 0 ? 1 : -1;
+        var y = window.scrollY, vh = window.innerHeight;
+
+        // Si la sección actual es más alta que la pantalla, primero se recorre normalmente
+        var current = sections.filter(function (s) {
+          return s.offsetTop <= y + 2 && s.offsetTop + s.offsetHeight > y + 2;
+        })[0];
+        if (current && current.offsetHeight > vh + 8) {
+          var end = current.offsetTop + current.offsetHeight - vh;
+          if (dir > 0 && y < end - 2) return;
+          if (dir < 0 && y > current.offsetTop + 2) return;
+        }
+
+        var list = stops(), target = null;
+        if (dir > 0) { for (var i = 0; i < list.length; i++) if (list[i] > y + 2) { target = list[i]; break; } }
+        else { for (var j = list.length - 1; j >= 0; j--) if (list[j] < y - 2) { target = list[j]; break; } }
+        if (target === null) return;
+
+        e.preventDefault();
+        moving = true; startedAt = Date.now();
+        window.scrollTo({ top: target, behavior: 'smooth' });
+        release();
+      }, { passive: false });
     })();
   </script>
 </body>

@@ -4,8 +4,5 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-Frame-Options: DENY
 
-/styles.css
-  Cache-Control: no-cache
-
 /favicon.svg
   Cache-Control: public, max-age=604800

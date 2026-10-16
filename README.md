@@ -1,22 +1,20 @@
 # Página de coaching
 
-Sitio estático (HTML + CSS, sin build) para publicar en Cloudflare Pages.
+Sitio estático (HTML + CSS, sin build) publicado en Cloudflare Workers.
 
 ```
-index.html    contenido de la página (busca los comentarios "EDITAR")
-styles.css    estilos; los colores están en las variables de :root
+index.html    contenido y estilos de la página
 favicon.svg   icono de la pestaña
-_headers      cabeceras de seguridad y caché para Cloudflare Pages
+_headers      cabeceras de seguridad y caché
 ```
 
 ## 1. Personalizar
 
-- Textos: edita directamente `index.html`. La sección "Cómo te acompaño" recoge, como
-  inspiración, ideas de Rosenberg, Kofman y Wolk.
+- Textos: edita directamente `index.html`.
 - Foto: `foto-david.jpg`. Para cambiarla, reemplaza el archivo por otro con el mismo nombre.
   En computadora se ajusta sola a la altura del texto de presentación.
-- Estilos: si cambias `styles.css`, sube el número en `styles.css?v=4` dentro de `index.html`
-  para que los visitantes vean la versión nueva de inmediato.
+- Estilos: están dentro de `index.html`, en el bloque `<style>`. Los colores están en las
+  variables de `:root`, al inicio de ese bloque.
 - Nombre del encabezado: usa la fuente Jost, cargada solo con las letras de
   "DAVID ROMANÍ COACH EN FORMACIÓN". Si cambias ese texto, actualiza el parámetro `text=`
   del enlace de Google Fonts en `index.html`.
