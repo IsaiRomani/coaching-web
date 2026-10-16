@@ -304,14 +304,19 @@ img { max-width: 100%; display: block; }
   .compare > div { padding: clamp(0.7rem, 1.4svh, 1.15rem) 0; }
   .facts { margin-top: clamp(2rem, 5svh, 4rem); }
   /* La agenda se ajusta al alto de la pantalla para que la sección quepa entera */
-  .calendar iframe { height: clamp(540px, calc(100svh - 21rem), 760px); }
+  .calendar iframe { height: clamp(480px, calc(100svh - 22rem), 760px); }
 }
-/* Cada giro de la rueda lleva a la sección siguiente */
-@media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
-  html { scroll-snap-type: y mandatory; }
-  .site-header, .section { scroll-snap-align: start; }
-  .site-footer { scroll-snap-align: end; }
+/* Dos columnas en pantallas anchas para que estas secciones quepan en una pantalla */
+@media (min-width: 1100px) {
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .two-col .col-side > .compare-title:first-child { margin-top: 0.4rem; }
+  .two-col .compare > div { grid-template-columns: 8.5rem 1fr; }
+  .booking { display: grid; grid-template-columns: minmax(18rem, 24rem) 1fr; gap: 4rem; align-items: center; }
+  .booking .calendar { margin-top: 0; }
+  .booking .calendar iframe { height: clamp(520px, calc(100svh - 9rem), 820px); }
 }
+
+/* El paso de una sección a otra con la rueda lo controla el script al final de la página */
 
 /* Aparición suave del contenido al llegar a cada sección (solo con JavaScript) */
 .js-reveal .section > .wrap {
@@ -431,7 +436,8 @@ img { max-width: 100%; display: block; }
 
     <!-- QUÉ ES EL COACHING -->
     <section class="section section-tint" id="coaching" data-label="Qué es el coaching">
-      <div class="wrap">
+      <div class="wrap two-col">
+        <div class="col-main">
         <div class="prose">
           <h2>¿Qué es el coaching?</h2>
           <p class="lead">
@@ -445,6 +451,19 @@ img { max-width: 100%; display: block; }
           </p>
         </div>
 
+        <h3 class="compare-title">Algunos temas que podemos trabajar</h3>
+        <ul class="topics">
+          <li>Decisiones de carrera y cambios de trabajo</li>
+          <li>Claridad de objetivos y prioridades</li>
+          <li>Conversaciones difíciles o pendientes</li>
+          <li>Relaciones en el trabajo</li>
+          <li>Hábitos, organización y foco</li>
+          <li>Confianza para comunicar y liderar</li>
+          <li>Equilibrio entre trabajo y vida personal</li>
+        </ul>
+        </div>
+
+        <div class="col-side">
         <h3 class="compare-title">¿En qué se diferencia de otras ayudas?</h3>
         <dl class="compare">
           <div>
@@ -460,17 +479,7 @@ img { max-width: 100%; display: block; }
             <dd>El mentor comparte su experiencia en un campo. El coach no necesita ser experto en tu tema; su especialidad es acompañar la conversación.</dd>
           </div>
         </dl>
-
-        <h3 class="compare-title">Algunos temas que podemos trabajar</h3>
-        <ul class="topics">
-          <li>Decisiones de carrera y cambios de trabajo</li>
-          <li>Claridad de objetivos y prioridades</li>
-          <li>Conversaciones difíciles o pendientes</li>
-          <li>Relaciones en el trabajo</li>
-          <li>Hábitos, organización y foco</li>
-          <li>Confianza para comunicar y liderar</li>
-          <li>Equilibrio entre trabajo y vida personal</li>
-        </ul>
+        </div>
       </div>
     </section>
 
@@ -529,12 +538,16 @@ img { max-width: 100%; display: block; }
 
     <!-- RESERVAR -->
     <section class="section" id="reservar" data-label="Reserva tu sesión">
-      <div class="wrap">
-        <div class="prose">
+      <div class="wrap booking">
+        <div class="booking-text prose">
           <h2>¿Te animas? Reserva tu sesión</h2>
           <p>
             Elige el horario que mejor te quede. Te llegará la confirmación y el enlace
             de Google Meet a tu correo. Los horarios se muestran en tu zona horaria.
+          </p>
+          <p class="calendar-fallback">
+            ¿No se ve la agenda?
+            <a href="https://calendar.app.google/291NgWWic4htYcRh8" target="_blank" rel="noopener">Ábrela en una pestaña nueva</a>.
           </p>
         </div>
 
@@ -544,10 +557,6 @@ img { max-width: 100%; display: block; }
             title="Agenda para reservar una sesión de coaching"
             loading="lazy"></iframe>
         </div>
-        <p class="calendar-fallback">
-          ¿No se ve la agenda?
-          <a href="https://calendar.app.google/291NgWWic4htYcRh8" target="_blank" rel="noopener">Ábrela en una pestaña nueva</a>.
-        </p>
       </div>
     </section>
 
@@ -643,51 +652,90 @@ img { max-width: 100%; display: block; }
       // sección siguiente o anterior. Solo en pantallas grandes y si la persona no
       // pidió reducir el movimiento.
       var slides = window.matchMedia('(min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)');
-      var moving = false, lastWheel = 0, startedAt = 0;
+      var DURATION = 650;        // duración de cada deslizamiento (ms)
+      var REPEAT = 800;          // con la rueda girando sin parar, avanza una sección cada 0,8 s
+      var animating = false, lastAccepted = 0, lastEvent = 0, lastSize = 0, history = [];
 
+      // Puntos de parada: el inicio de cada sección y, si una sección es más alta que
+      // la pantalla, también su final, para que nunca se corte contenido.
       function stops() {
-        var max = document.documentElement.scrollHeight - window.innerHeight;
-        var list = [0];
-        sections.slice(1).forEach(function (s) { list.push(Math.min(s.offsetTop, max)); });
-        list.push(max);                       // el pie de página
-        return list;
+        var vh = window.innerHeight;
+        var max = document.documentElement.scrollHeight - vh;
+        var list = [0, max];
+        sections.forEach(function (s, i) {
+          if (i > 0) list.push(s.offsetTop);
+          if (s.offsetHeight > vh * 1.12) list.push(s.offsetTop + s.offsetHeight - vh);
+        });
+        return list.map(function (v) { return Math.max(0, Math.min(Math.round(v), max)); })
+                   .sort(function (a, b) { return a - b; })
+                   .filter(function (v, i, arr) { return i === 0 || v - arr[i - 1] > 4; });
       }
 
-      function release() {
-        var now = Date.now();
-        // Espera a que termine la animación y a que la inercia del trackpad se detenga
-        if (now - startedAt > 750 && now - lastWheel > 160) { moving = false; return; }
-        setTimeout(release, 60);
+      function animateTo(target) {
+        var start = window.scrollY, dist = target - start, t0 = null;
+        if (Math.abs(dist) < 2) return;
+        animating = true;
+        document.documentElement.style.scrollBehavior = 'auto';
+        function frame(t) {
+          if (t0 === null) t0 = t;
+          var k = Math.min((t - t0) / DURATION, 1);
+          var ease = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+          window.scrollTo(0, start + dist * ease);
+          if (k < 1) requestAnimationFrame(frame);
+          else { animating = false; document.documentElement.style.scrollBehavior = ''; }
+        }
+        requestAnimationFrame(frame);
+      }
+
+      function go(dir) {
+        var y = window.scrollY, list = stops(), target = null, i;
+        if (dir > 0) { for (i = 0; i < list.length; i++) if (list[i] > y + 4) { target = list[i]; break; } }
+        else { for (i = list.length - 1; i >= 0; i--) if (list[i] < y - 4) { target = list[i]; break; } }
+        if (target === null) return false;
+        lastAccepted = Date.now();
+        animateTo(target);
+        return true;
       }
 
       window.addEventListener('wheel', function (e) {
-        if (!slides.matches || e.ctrlKey || Math.abs(e.deltaY) < 2) return;
-        lastWheel = Date.now();
-        if (moving) { e.preventDefault(); return; }
-
-        var dir = e.deltaY > 0 ? 1 : -1;
-        var y = window.scrollY, vh = window.innerHeight;
-
-        // Si la sección actual es más alta que la pantalla, primero se recorre normalmente
-        var current = sections.filter(function (s) {
-          return s.offsetTop <= y + 2 && s.offsetTop + s.offsetHeight > y + 2;
-        })[0];
-        if (current && current.offsetHeight > vh + 8) {
-          var end = current.offsetTop + current.offsetHeight - vh;
-          if (dir > 0 && y < end - 2) return;
-          if (dir < 0 && y > current.offsetTop + 2) return;
-        }
-
-        var list = stops(), target = null;
-        if (dir > 0) { for (var i = 0; i < list.length; i++) if (list[i] > y + 2) { target = list[i]; break; } }
-        else { for (var j = list.length - 1; j >= 0; j--) if (list[j] < y - 2) { target = list[j]; break; } }
-        if (target === null) return;
-
+        if (!slides.matches || e.ctrlKey) return;
+        var delta = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? window.innerHeight : 1);
+        var size = Math.abs(delta);
+        if (size < 1) return;
         e.preventDefault();
-        moving = true; startedAt = Date.now();
-        window.scrollTo({ top: target, behavior: 'smooth' });
-        release();
+
+        var now = Date.now();
+        var gap = now - lastEvent;
+        // Un gesto nuevo: hubo una pausa, o el impulso crece (la inercia del trackpad solo decrece)
+        var fresh = gap > 200 || size > lastSize * 1.4 + 4;
+        if (gap > 200) history = [];
+        history.push(size);
+        if (history.length > 30) history.shift();
+        // La rueda girando sin parar mantiene su fuerza; la inercia del trackpad la va
+        // perdiendo. Se compara el promedio reciente con el anterior.
+        var steady = true;
+        if (history.length >= 10) {
+          var avg = function (a) { return a.reduce(function (x, y) { return x + y; }, 0) / a.length; };
+          steady = avg(history.slice(-5)) >= avg(history.slice(0, -5)) * 0.9;
+        }
+        lastEvent = now; lastSize = size;
+
+        if (animating) return;
+        if (fresh || (steady && now - lastAccepted > REPEAT)) go(delta > 0 ? 1 : -1);
       }, { passive: false });
+
+      // Teclado: flechas, Av Pág / Re Pág y barra espaciadora también pasan de sección
+      window.addEventListener('keydown', function (e) {
+        if (!slides.matches || e.altKey || e.ctrlKey || e.metaKey) return;
+        var el = document.activeElement;
+        if (el && el !== document.body && el !== document.documentElement) return;
+        var keys = { ArrowDown: 1, PageDown: 1, ' ': 1, ArrowUp: -1, PageUp: -1 };
+        var dir = keys[e.key];
+        if (!dir) return;
+        if (e.key === ' ' && e.shiftKey) dir = -1;
+        e.preventDefault();
+        if (!animating) go(dir);
+      });
     })();
   </script>
 </body>
