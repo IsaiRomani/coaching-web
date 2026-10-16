@@ -17,12 +17,9 @@ _headers      cabeceras de seguridad y caché para Cloudflare Pages
 
 ## 2. Agenda de Google Calendar
 
-El botón "Ver horarios disponibles" abre la agenda de citas:
-https://calendar.app.google/gUaTFDAka4KVDw3v6
-
-Para mostrar el calendario dentro de la página en lugar del botón, en Google Calendar abre
-la agenda > Compartir > Sitio web > Calendario integrado, y usa ese `<iframe>`
-(la URL termina en `?gv=true`).
+La sección "Reserva tu sesión" muestra integrada la agenda "Prácticas Sesiones de Coaching"
+(iframe en `index.html`), con un enlace de respaldo a https://calendar.app.google/291NgWWic4htYcRh8.
+Si cambias de agenda, reemplaza ambas URLs.
 
 ## 3. Probar en local
 
