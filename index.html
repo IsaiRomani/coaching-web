@@ -15,8 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Jost solo para el nombre del encabezado: se descargan únicamente estas letras -->
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&text=DAVIROMN%C3%8DCHEF%C3%93%20&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&text=DAVIROMN%C3%8DCHEF%C3%93%20&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -39,7 +39,7 @@
   <main id="contenido">
 
     <!-- HERO: una pregunta abierta, como en una sesión -->
-    <section class="hero">
+    <section class="hero" id="inicio" data-label="Inicio">
       <div class="wrap">
         <p class="hero-intro">Coaching individual en línea</p>
         <h1 class="hero-question">¿Qué cambiaría en tu vida si tuvieras claro lo que de verdad quieres?</h1>
@@ -56,10 +56,10 @@
     </section>
 
     <!-- SOBRE MÍ -->
-    <section class="section" id="sobre-mi">
+    <section class="section" id="sobre-mi" data-label="Sobre mí">
       <div class="wrap split">
         <div class="split-aside">
-          <img class="portrait" src="foto-david.jpg" width="640" height="800"
+          <img class="portrait" src="foto-david.jpg" width="880" height="1000"
                alt="David Romaní sonriendo, sentado sobre una roca frente a las montañas"
                loading="lazy" decoding="async">
         </div>
@@ -84,7 +84,7 @@
     </section>
 
     <!-- QUÉ ES EL COACHING -->
-    <section class="section section-tint" id="coaching">
+    <section class="section section-tint" id="coaching" data-label="Qué es el coaching">
       <div class="wrap">
         <div class="prose">
           <h2>¿Qué es el coaching?</h2>
@@ -128,32 +128,29 @@
       </div>
     </section>
 
-    <!-- CÓMO TE ACOMPAÑO: principios, con un guiño a quienes los inspiran -->
-    <section class="section" id="acompanamiento">
+    <!-- CÓMO TE ACOMPAÑO -->
+    <section class="section" id="acompanamiento" data-label="Cómo te acompaño">
       <div class="wrap">
         <h2>Cómo te acompaño</h2>
         <ul class="principles">
           <li>
             <h3>Te escucho sin juzgarte</h3>
             <p>Más allá de lo que me cuentes, me interesa lo que sientes y lo que necesitas. Ahí suele estar la clave.</p>
-            <p class="credit">Inspirado en la comunicación no violenta de Marshall Rosenberg.</p>
           </li>
           <li>
             <h3>Tú eres protagonista</h3>
             <p>No buscamos culpables: buscamos qué está en tus manos hacer. Eso, aunque parezca poco, cambia mucho.</p>
-            <p class="credit">Una idea que aprendí leyendo a Fredy Kofman.</p>
           </li>
           <li>
             <h3>El fuego ya está en ti</h3>
             <p>No traigo las respuestas. Mi trabajo es ayudar a que lo que ya tienes vuelva a encenderse.</p>
-            <p class="credit">Como en el arte de soplar las brasas, de Leonardo Wolk.</p>
           </li>
         </ul>
       </div>
     </section>
 
     <!-- CÓMO FUNCIONA (es una secuencia real, por eso va numerada) -->
-    <section class="section section-tint" id="como-funciona">
+    <section class="section section-tint" id="como-funciona" data-label="Cómo funciona">
       <div class="wrap">
         <h2>Cómo funciona</h2>
         <ol class="steps">
@@ -185,7 +182,7 @@
     </section>
 
     <!-- RESERVAR -->
-    <section class="section" id="reservar">
+    <section class="section" id="reservar" data-label="Reserva tu sesión">
       <div class="wrap">
         <div class="prose">
           <h2>¿Te animas? Reserva tu sesión</h2>
@@ -209,7 +206,7 @@
     </section>
 
     <!-- PREGUNTAS FRECUENTES -->
-    <section class="section section-tint" id="preguntas">
+    <section class="section section-tint" id="preguntas" data-label="Preguntas frecuentes">
       <div class="wrap">
         <h2>Preguntas frecuentes</h2>
         <div class="faq">
@@ -239,6 +236,9 @@
 
   </main>
 
+  <!-- Indicador de secciones: se genera con JavaScript a partir de data-label -->
+  <nav class="dots" aria-label="Secciones de la página" hidden><ol></ol></nav>
+
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <p>¿Tienes alguna duda antes de reservar? Escríbeme a
@@ -248,6 +248,51 @@
     </div>
   </footer>
 
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Indicador de secciones (puntos a la derecha) y transición suave entre secciones
+    (function () {
+      if (!('IntersectionObserver' in window)) return;
+      var sections = Array.prototype.slice.call(document.querySelectorAll('main > section[data-label]'));
+      var nav = document.querySelector('.dots');
+      var list = nav.querySelector('ol');
+      var links = {};
+
+      sections.forEach(function (sec) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + sec.id;
+        a.innerHTML = '<span class="dot-label">' + sec.dataset.label + '</span>';
+        a.setAttribute('aria-label', sec.dataset.label);
+        li.appendChild(a);
+        list.appendChild(li);
+        links[sec.id] = a;
+      });
+      nav.hidden = false;
+
+      // Marca como activa la sección que ocupa el centro de la pantalla
+      var active = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          Object.keys(links).forEach(function (id) { links[id].removeAttribute('aria-current'); });
+          links[e.target.id].setAttribute('aria-current', 'true');
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+
+      // Hace aparecer el contenido de cada sección al llegar a ella
+      document.documentElement.classList.add('js-reveal');
+      var reveal = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('is-in'); reveal.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+
+      sections.forEach(function (sec) {
+        active.observe(sec);
+        if (sec.classList.contains('section')) reveal.observe(sec);
+      });
+    })();
+  </script>
 </body>
 </html>

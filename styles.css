@@ -15,7 +15,7 @@
   --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mark: "Jost", "Public Sans", system-ui, sans-serif;   /* solo el nombre del encabezado */
 
-  --wrap: 68rem;
+  --wrap: 76rem;
   --measure: 38rem;
   --space: clamp(4rem, 9vw, 7.5rem);
   color-scheme: light;
@@ -96,11 +96,11 @@ img { max-width: 100%; display: block; }
   font-family: var(--mark); color: var(--ink); text-decoration: none; line-height: 1;
 }
 .brand-name {
-  font-size: 1.2rem; font-weight: 500; letter-spacing: 0.16em;
+  font-size: 1.25rem; font-weight: 600; letter-spacing: 0.16em;
   margin-right: -0.16em;          /* compensa el espaciado final para centrar */
 }
 .brand-role {
-  font-size: 0.62rem; font-weight: 400; letter-spacing: 0.34em; color: var(--muted);
+  font-size: 0.64rem; font-weight: 600; letter-spacing: 0.34em; color: var(--muted);
   margin-top: 0.45rem; margin-right: -0.34em;
 }
 @media (max-width: 380px) {
@@ -119,27 +119,32 @@ img { max-width: 100%; display: block; }
 /* ============================================================
    Hero: la pregunta abierta
    ============================================================ */
-.hero { padding: clamp(4.5rem, 12vw, 9rem) 0 var(--space); }
+.hero {
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  min-height: calc(100svh - 5rem);
+  display: flex; align-items: center;
+}
+.hero > .wrap { width: 100%; }
 .hero-intro { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
 .hero-question {
-  font-size: clamp(2.4rem, 6.4vw, 4.75rem);
-  line-height: 1.06;
-  letter-spacing: -0.02em;
-  max-width: 15ch;
+  font-size: clamp(2.6rem, min(6.8vw, 9.5svh), 6.25rem);
+  line-height: 1.03;
+  letter-spacing: -0.025em;
+  max-width: 17ch;
 }
 /* La línea en blanco para "escribir" tu respuesta */
 .answer-line {
   height: 1px;
   background: var(--ink);
   opacity: 0.55;
-  max-width: 32rem;
+  max-width: 40rem;
   margin: clamp(2rem, 5vw, 3rem) 0 clamp(1.75rem, 4vw, 2.5rem);
   transform-origin: left;
   animation: draw 1.4s cubic-bezier(.2,.7,.2,1) 0.3s both;
 }
 @keyframes draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-.hero-sub { max-width: 32rem; font-size: 1.15rem; color: var(--muted); }
+.hero-sub { max-width: 36rem; font-size: clamp(1.1rem, 1.4vw, 1.3rem); color: var(--muted); }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.75rem; margin-top: 2rem; }
 
 .button {
@@ -161,14 +166,20 @@ img { max-width: 100%; display: block; }
 
 /* Sobre mí */
 .split { display: grid; gap: 2.5rem; grid-template-columns: 1fr; }
-@media (min-width: 760px) {
-  .split { grid-template-columns: 15rem 1fr; gap: 4.5rem; align-items: start; }
-}
 .portrait {
-  width: 100%; max-width: 15rem; height: auto; aspect-ratio: 4 / 5;
-  object-fit: cover; border-radius: 0.5rem; background: var(--tint);
+  display: block; width: 100%; max-width: 15rem; height: auto; aspect-ratio: 4 / 5;
+  object-fit: cover; object-position: 50% 30%;
+  border-radius: 0.75rem; background: var(--tint);
 }
-@media (max-width: 759px) { .portrait { max-width: 13rem; } }
+/* En pantallas anchas la foto ocupa exactamente la altura del texto de presentación */
+@media (min-width: 760px) {
+  .split { grid-template-columns: minmax(16rem, 22rem) 1fr; gap: 4.5rem; align-items: stretch; }
+  .split-aside { position: relative; min-height: 22rem; }
+  .portrait {
+    position: absolute; inset: 0;
+    max-width: none; height: 100%; aspect-ratio: auto;
+  }
+}
 .credential { color: var(--muted); font-size: 0.95rem; border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1.5rem; }
 
 /* Comparación con otras ayudas */
@@ -198,10 +209,6 @@ img { max-width: 100%; display: block; }
 .principles li { border-top: 2px solid var(--accent); padding-top: 1.5rem; }
 .principles h3 { font-size: 1.55rem; margin-bottom: 0.75rem; }
 .principles p { margin-bottom: 0.9rem; }
-.principles .credit {
-  font-family: var(--serif); font-style: italic; font-size: 1rem;
-  color: var(--muted); margin: 0;
-}
 
 /* Cómo funciona: pasos numerados */
 .steps {
@@ -263,8 +270,67 @@ img { max-width: 100%; display: block; }
 .site-footer p { margin: 0; }
 .footer-small { color: var(--muted); font-size: 0.9rem; }
 
+/* ============================================================
+   Secciones como "diapositivas" en pantallas grandes
+   ============================================================ */
+@media (min-width: 900px) and (min-height: 640px) {
+  .section {
+    min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .section > .wrap { width: 100%; }
+}
+@media (min-width: 900px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  html { scroll-snap-type: y proximity; }
+  .site-header, .section { scroll-snap-align: start; }
+}
+
+/* Aparición suave del contenido al llegar a cada sección (solo con JavaScript) */
+.js-reveal .section > .wrap {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.js-reveal .section.is-in > .wrap { opacity: 1; transform: none; }
+
+/* Indicador de secciones: puntos a la derecha */
+.dots {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  z-index: 20; display: none;
+}
+@media (min-width: 900px) { .dots:not([hidden]) { display: block; } }
+.dots ol { list-style: none; margin: 0; padding: 0; position: relative; }
+.dots ol::before {               /* línea fina que une los puntos */
+  content: ""; position: absolute; right: 4px; top: 0.75rem; bottom: 0.75rem;
+  width: 1px; background: var(--line);
+}
+.dots a {
+  position: relative;
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+  height: 1.6rem; text-decoration: none;
+}
+.dots a::after {
+  content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--muted);
+  transition: transform .3s ease, background-color .3s ease, border-color .3s ease;
+}
+.dots a:hover::after { border-color: var(--accent); }
+.dots a[aria-current="true"]::after {
+  background: var(--accent); border-color: var(--accent); transform: scale(1.35);
+}
+.dot-label {
+  font-size: 0.8rem; font-weight: 500; color: var(--ink); white-space: nowrap;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  opacity: 0; transform: translateX(6px); pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.dots a:hover .dot-label,
+.dots a:focus-visible .dot-label,
+.dots a[aria-current="true"] .dot-label { opacity: 1; transform: none; }
+
 /* Respeta a quien prefiere menos movimiento */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js-reveal .section > .wrap { opacity: 1; transform: none; }
 }

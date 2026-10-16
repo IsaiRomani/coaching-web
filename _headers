@@ -5,7 +5,7 @@
   X-Frame-Options: DENY
 
 /styles.css
-  Cache-Control: public, max-age=86400
+  Cache-Control: no-cache
 
 /favicon.svg
   Cache-Control: public, max-age=604800
