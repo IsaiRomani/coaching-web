@@ -13,6 +13,7 @@
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mark: "Jost", "Public Sans", system-ui, sans-serif;   /* solo el nombre del encabezado */
 
   --wrap: 68rem;
   --measure: 38rem;
@@ -87,10 +88,24 @@ img { max-width: 100%; display: block; }
 .site-header { border-bottom: 1px solid var(--line); }
 .header-inner {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem; min-height: 4.25rem;
+  gap: 1rem; min-height: 5rem;
 }
+/* Nombre en dos líneas: DAVID ROMANÍ / COACH EN FORMACIÓN */
 .brand {
-  font-family: var(--serif); font-size: 1.3rem; color: var(--ink); text-decoration: none;
+  display: inline-flex; flex-direction: column; align-items: center;
+  font-family: var(--mark); color: var(--ink); text-decoration: none; line-height: 1;
+}
+.brand-name {
+  font-size: 1.2rem; font-weight: 500; letter-spacing: 0.16em;
+  margin-right: -0.16em;          /* compensa el espaciado final para centrar */
+}
+.brand-role {
+  font-size: 0.62rem; font-weight: 400; letter-spacing: 0.34em; color: var(--muted);
+  margin-top: 0.45rem; margin-right: -0.34em;
+}
+@media (max-width: 380px) {
+  .brand-name { font-size: 1.05rem; letter-spacing: 0.12em; margin-right: -0.12em; }
+  .brand-role { font-size: 0.56rem; letter-spacing: 0.28em; margin-right: -0.28em; }
 }
 .site-header nav { display: flex; align-items: center; gap: 1.75rem; }
 .site-header nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
@@ -150,12 +165,10 @@ img { max-width: 100%; display: block; }
   .split { grid-template-columns: 15rem 1fr; gap: 4.5rem; align-items: start; }
 }
 .portrait {
-  width: 100%; max-width: 15rem; aspect-ratio: 4 / 5;
-  background: var(--tint); border: 1px solid var(--line); border-radius: 0.5rem;
-  display: grid; place-items: center;
-  font-family: var(--serif); font-size: 3rem; color: var(--muted);
-  object-fit: cover;
+  width: 100%; max-width: 15rem; height: auto; aspect-ratio: 4 / 5;
+  object-fit: cover; border-radius: 0.5rem; background: var(--tint);
 }
+@media (max-width: 759px) { .portrait { max-width: 13rem; } }
 .credential { color: var(--muted); font-size: 0.95rem; border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 1.5rem; }
 
 /* Comparación con otras ayudas */
@@ -174,6 +187,25 @@ img { max-width: 100%; display: block; }
 .topics li {
   border: 1px solid var(--line); border-radius: 999px;
   padding: 0.45rem 1rem; font-size: 0.95rem; background: var(--bg);
+}
+
+/* Mi enfoque: las tres bases de la formación */
+.influences {
+  list-style: none; padding: 0; margin: 2.5rem 0 0;
+  display: grid; gap: 2.5rem 3rem; grid-template-columns: 1fr;
+}
+@media (min-width: 900px) { .influences { grid-template-columns: repeat(3, 1fr); } }
+.influences li { border-top: 2px solid var(--accent); padding-top: 1.5rem; }
+.influence-book {
+  font-family: var(--serif); font-style: italic; font-size: 1.55rem; line-height: 1.2;
+  margin: 0 0 0.4rem;
+}
+.influence-author { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 1.1rem; }
+.influence-session { color: var(--muted); font-size: 0.95rem; margin: 0; }
+.influence-session strong { color: var(--ink); font-weight: 600; }
+.invite {
+  margin: 3.5rem 0 0; max-width: var(--measure);
+  font-family: var(--serif); font-size: 1.35rem; line-height: 1.45;
 }
 
 /* Cómo funciona: pasos numerados */

@@ -11,9 +11,13 @@ _headers      cabeceras de seguridad y caché para Cloudflare Pages
 
 ## 1. Personalizar
 
-- Textos: edita directamente `index.html`.
-- Foto: sube `foto.jpg` a esta carpeta y reemplaza el `<div class="portrait">` por
-  `<img class="portrait" src="foto.jpg" alt="David Romaní">`.
+- Textos: edita directamente `index.html`. La sección "Mi enfoque" resume las tres bases
+  de la formación (Kofman, Rosenberg y Wolk).
+- Foto: `foto-david.jpg` (640×800). Para cambiarla, reemplaza el archivo con otro del mismo nombre
+  en formato vertical 4:5.
+- Nombre del encabezado: usa la fuente Jost, cargada solo con las letras de
+  "DAVID ROMANÍ COACH EN FORMACIÓN". Si cambias ese texto, actualiza el parámetro `text=`
+  del enlace de Google Fonts en `index.html`.
 
 ## 2. Agenda de Google Calendar
 
